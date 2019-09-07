@@ -5,6 +5,9 @@ const axiosApi = axios.create({
 });
 
 export default {
+  /**
+   * @description fetch all users from the API.
+   */
   fetchAllUsers: () => {
     return axiosApi.get('/user/');
   },

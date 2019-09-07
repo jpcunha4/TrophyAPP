@@ -1,21 +1,35 @@
 import React, {Component} from 'react';
-import {SafeAreaView, View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 // Service
 import api from '../service/Api.service';
 
+/**
+ * @description The MainScreen presents the user a complete view of each player's status and rank information.
+ * @author João Paulo
+ */
 export default class MainScreen extends Component {
   constructor() {
     super();
 
     this.state = {
       users: [],
-    }
+    };
   }
 
   componentDidMount = () => {
     this.fetchUsers();
   };
 
+  /**
+   * @description Fetch all user from the API.
+   */
   fetchUsers = async () => {
     try {
       const users = await api.fetchAllUsers();
@@ -30,10 +44,18 @@ export default class MainScreen extends Component {
     }
   };
 
+  /**
+   * @description Redirects the user to the RankRules screen.
+   */
   goToRankRulesScreen = () => {
-    console.warn('I do nothing!');
-  }
-  
+    const {navigate} = this.props.navigation;
+
+    navigate('RankRules');
+  };
+
+  /**
+   * @description Defines the throphy emoji from a rank.
+   */
   getTrophy = rank => {
     switch (rank) {
       case 1:
@@ -49,18 +71,31 @@ export default class MainScreen extends Component {
       default:
         return '😵';
     }
-  }
+  };
 
+  /**
+   * @description Renders the flatlist item with the player's info.
+   */
   renderListItem = ({item}) => (
     <View style={styles.cellContainer}>
       <Text>{item.name}</Text>
-      <Text>{item.collectedCoins.amount} coin(s) {this.getTrophy(item.collectedCoins.trophy)}</Text>
-      <Text>{item.deaths.amount} death(s) {this.getTrophy(item.deaths.trophy)}</Text>
-      {item.killedMonsters.length ? item.killedMonsters.map(monster => (
-        <Text>
-          {monster.name} killed {monster.amount} time(s) {this.getTrophy(monster.trophy)}
-        </Text>
-      )) : <Text>0 Killed monsters {this.getTrophy(0)}</Text>}
+      <Text>
+        {item.collectedCoins.amount} coin(s){' '}
+        {this.getTrophy(item.collectedCoins.trophy)}
+      </Text>
+      <Text>
+        {item.deaths.amount} death(s) {this.getTrophy(item.deaths.trophy)}
+      </Text>
+      {item.killedMonsters.length ? (
+        item.killedMonsters.map(monster => (
+          <Text>
+            {monster.name} killed {monster.amount} time(s){' '}
+            {this.getTrophy(monster.trophy)}
+          </Text>
+        ))
+      ) : (
+        <Text>0 Killed monsters {this.getTrophy(0)}</Text>
+      )}
     </View>
   );
 
@@ -104,7 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     textAlign: 'center',
   },
-  button:{
+  button: {
     color: '#4688F1',
     fontSize: 16,
     fontWeight: '300',
@@ -116,5 +151,5 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: '#000',
-  }
+  },
 });
